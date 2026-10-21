@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prochè – Suivi du bracelet</title>
+<style>
+:root{--bg:#c9ffd9;--ph:#050d08;--card:#0d1a12;--card2:#122319;--g:#6df58a;--g2:#b4ffc6;--tx:#f2fff6;--mut:#7f9a89;--red:#ff5a5f;--line:rgba(109,245,138,.18);box-sizing:border-box}
+:root:not([data-theme="light"]){color-scheme:dark}
+*{box-sizing:inherit;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+html,body{min-height:100%}
+body{background:var(--bg);display:flex;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 12px max(16px,env(safe-area-inset-bottom))}
+.phone{width:100%;max-width:390px;background:radial-gradient(120% 60% at 50% 0,#12532a 0,var(--ph) 55%);border:4px solid #000;border-radius:44px;padding:20px 16px 90px;color:var(--tx);position:relative;overflow:hidden;min-height:760px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.top small{color:var(--mut);font-size:12px}.top h1{font-size:22px}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--g),#1c8a3d);display:grid;place-items:center;color:#032b10;font-weight:700;border:2px solid #fff}
+.hero{margin-top:16px;border-radius:24px;padding:18px;background:linear-gradient(135deg,#7dff9b,#b9ffcc 55%,#5be481);color:#04210f;transition:.4s}
+.hero.bad{background:linear-gradient(135deg,#ff7b7f,#ffc1c3 60%,#ff5a5f);color:#3a0508}
+.hero small{opacity:.75;font-size:13px}
+.bpm{display:flex;align-items:baseline;gap:6px;margin:4px 0 12px}.bpm b{font-size:52px;letter-spacing:-1px}.bpm span{font-weight:600}
+.heart{display:inline-block;animation:beat var(--d,.85s) infinite}@keyframes beat{50%{transform:scale(1.25)}}
+.row{display:flex;gap:10px}
+.mini{flex:1;background:#06150c;color:var(--tx);border-radius:16px;padding:10px 12px;border:1px solid var(--line)}
+.mini small{color:var(--mut);display:block;font-size:11px}.mini b{font-size:17px}
+.ok{color:var(--g)}.ko{color:var(--red)}
+h2{font-size:17px;margin:20px 0 10px;display:flex;justify-content:space-between;align-items:center}h2 a{font-size:12px;color:var(--g);font-weight:500}
+.map{border-radius:22px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.map svg{display:block;width:100%}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px;margin-top:12px}
+.panel label{font-size:12px;color:var(--mut);display:flex;justify-content:space-between}
+input[type=range]{width:100%;accent-color:var(--g);margin:8px 0 12px}
+.btn{width:100%;border:0;border-radius:16px;padding:13px;font-weight:700;background:linear-gradient(135deg,#7dff9b,#4fe07a);color:#04210f;font-size:14px;cursor:pointer}
+.btn.alt{background:#122319;color:var(--g);border:1px solid var(--line)}
+.al{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:10px}
+.ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#122319;font-size:18px;flex:none}
+.al.r .ic{background:rgba(255,90,95,.18)}.al b{font-size:14px;display:block}.al small{color:var(--mut);font-size:12px}.al time{margin-left:auto;color:var(--mut);font-size:11px;white-space:nowrap}
+.nav{position:absolute;left:16px;right:16px;bottom:18px;background:rgba(18,35,25,.85);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:28px;display:flex;justify-content:space-around;padding:8px}
+.nav button{background:none;border:0;color:var(--mut);padding:10px 22px;border-radius:20px;font-size:13px;cursor:pointer}
+.nav button.on{background:var(--g);color:#04210f;font-weight:700}
+.toast{position:absolute;left:14px;right:14px;top:14px;z-index:5;background:rgba(40,12,14,.92);border:1px solid var(--red);backdrop-filter:blur(12px);border-radius:18px;padding:12px 14px;transform:translateY(-140%);transition:.4s}
+.toast.show{transform:none}.toast b{display:block;font-size:14px}.toast small{color:#ffc1c3;font-size:12px}
+.view{display:none}.view.on{display:block}
+.pulse{animation:p 1.6s infinite;transform-origin:center;transform-box:fill-box}@keyframes p{0%{opacity:.6;transform:scale(.6)}100%{opacity:0;transform:scale(2)}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast" id="toast"><b id="tt"></b><small id="td"></small></div>
+  <div class="top"><div><small>Bonsoir 👋</small><h1>Abed El Hamid</h1></div><div class="av">A</div></div>
+
+  <div class="view on" id="v-home">
+    <div class="hero" id="hero">
+      <small>Fréquence cardiaque · Sameh</small>
+      <div class="bpm"><span class="heart" id="hrt">❤</span><b id="bpm">72</b><span>BPM</span></div>
+      <div class="row">
+        <div class="mini"><small>Zone</small><b id="zone" class="ok">Dans la zone</b></div>
+        <div class="mini"><small>Distance</small><b id="dist">0 m</b></div>
+      </div>
+    </div>
+
+    <h2>Position en direct <a>Rayon 200 m</a></h2>
+    <div class="map">
+      <svg viewBox="0 0 340 300" id="svg">
+        <rect width="340" height="300" fill="#0b1a11"/>
+        <g stroke="#173524" stroke-width="10" fill="none" stroke-linecap="round">
+          <path d="M0 80 L340 120"/><path d="M60 0 L110 300"/><path d="M0 230 L340 200"/><path d="M250 0 L230 300"/>
+        </g>
+        <g fill="#10281a"><rect x="130" y="20" width="40" height="30" rx="5"/><rect x="270" y="150" width="40" height="40" rx="5"/><rect x="20" y="130" width="30" height="40" rx="5"/><rect x="150" y="250" width="50" height="30" rx="5"/><rect x="280" y="40" width="40" height="30" rx="5"/></g>
+        <circle id="zc" cx="170" cy="150" r="80" fill="rgba(109,245,138,.14)" stroke="#6df58a" stroke-width="2" stroke-dasharray="6 5"/>
+        <text x="170" y="156" text-anchor="middle" font-size="20">🏠</text>
+        <g id="pt">
+          <circle class="pulse" r="14" fill="#6df58a" id="pc"/>
+          <circle r="15" fill="#122319" stroke="#6df58a" stroke-width="3" id="pr"/>
+          <text y="5" text-anchor="middle" font-size="14" fill="#fff" font-weight="700">S</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="panel">
+      <label><span>Simulation : éloigner Sameh</span><span id="dv">0 m</span></label>
+      <input type="range" id="rng" min="0" max="350" value="0">
+      <button class="btn alt" id="hb">Simuler un BPM anormal</button>
+    </div>
+  </div>
+
+  <div class="view" id="v-al">
+    <h2>Historique des alertes</h2>
+    <div id="list"></div>
+    <div class="panel"><label><span>Seuils</span></label>
+      <small style="color:var(--mut);font-size:13px;line-height:1.6">Sortie de zone &gt; 200 m · Retour &lt; 180 m<br>BPM normal : 45 – 120</small></div>
+  </div>
+
+  <div class="nav"><button class="on" data-v="home">Accueil</button><button data-v="al">Alertes</button></div>
+</div>
+
+<script>
+const HOME_R=200, BACK_R=180, MIN=45, MAX=120, S=80/200;
+let dist=0, bpm=72, force=false, out=false, bad=false, hist=[];
+const $=id=>document.getElementById(id);
+function now(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}
+function toast(t,d){$('tt').textContent=t;$('td').textContent=d;$('toast').classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>$('toast').classList.remove('show'),3500)}
+function add(ic,t,d,red){hist.unshift({ic,t,d,red,time:now()});render();if(red)toast(t,d)}
+function render(){
+  $('list').innerHTML=hist.length?hist.map(a=>`<div class="al ${a.red?'r':''}"><div class="ic">${a.ic}</div><div><b>${a.t}</b><small>${a.d}</small></div><time>${a.time}</time></div>`).join(''):'<small style="color:var(--mut)">Aucune alerte pour le moment.</small>';
+}
+function update(){
+  const x=170+Math.min(dist,350)*S*0.9, y=150-Math.min(dist,350)*S*0.25;
+  $('pt').setAttribute('transform',`translate(${x},${y})`);
+  $('dist').textContent=Math.round(dist)+' m';$('dv').textContent=Math.round(dist)+' m';
+  if(!out&&dist>HOME_R){out=true;add('📍','Sortie de zone',`Sameh est à ${Math.round(dist)} m du domicile`,true)}
+  else if(out&&dist<BACK_R){out=false;add('🏠','Retour en zone','Sameh est revenu à la maison',false)}
+  const z=$('zone');z.textContent=out?'Hors zone':'Dans la zone';z.className=out?'ko':'ok';
+  const col=out?'#ff5a5f':'#6df58a';
+  $('zc').setAttribute('stroke',col);$('zc').setAttribute('fill',out?'rgba(255,90,95,.16)':'rgba(109,245,138,.14)');
+  $('pr').setAttribute('stroke',col);$('pc').setAttribute('fill',col);
+  const abn=bpm<MIN||bpm>MAX;
+  if(abn&&!bad){bad=true;add('❤','BPM anormal : '+bpm,'Valeur hors de la plage 45–120',true)}
+  if(!abn&&bad){bad=false;add('✅','BPM normal','Rythme cardiaque revenu à la normale',false)}
+  $('hero').classList.toggle('bad',out||abn);
+  $('bpm').textContent=bpm;$('hrt').style.setProperty('--d',(60/bpm)+'s');
+}
+$('rng').oninput=e=>{dist=+e.target.value;update()};
+$('hb').onclick=()=>{force=!force;$('hb').textContent=force?'Revenir à un BPM normal':'Simuler un BPM anormal';$('hb').className='btn'+(force?'':' alt')};
+setInterval(()=>{const t=force?134:72;bpm=Math.round(bpm+(t-bpm)*.35+(Math.random()*4-2));update()},1500);
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('on',x===b));
+  ['home','al'].forEach(v=>$('v-'+v).classList.toggle('on',v===b.dataset.v));
+});
+add('📡','Bracelet connecté','Sameh · batterie OK',false);update();
+</script>
+</body>
+</html>
